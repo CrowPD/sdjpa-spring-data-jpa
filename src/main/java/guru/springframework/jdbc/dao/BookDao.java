@@ -9,6 +9,8 @@ public interface BookDao {
 
 	Book findBookByTitle(String title) throws EntityNotFoundException;
 
+	Book findBookByIsbn(String isbn);
+
 	Book saveNewBook(Book book);
 
 	Book updateBook(Book book);
