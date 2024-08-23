@@ -6,7 +6,6 @@ import guru.springframework.jdbc.dao.BookDao;
 import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.domain.Book;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -89,9 +88,7 @@ public class DaoIntegrationTest {
 
 	@Test
 	void testGetBookByNameThrowsOnMissing() {
-		assertThrows(EntityNotFoundException.class, () -> {
-			bookDao.findBookByTitle("foo");
-		});
+		assertThrows(EntityNotFoundException.class, () -> bookDao.findBookByTitle("foo"));
 	}
 
 	@Test
