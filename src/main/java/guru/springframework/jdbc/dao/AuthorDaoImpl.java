@@ -4,7 +4,6 @@ import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.repositories.AuthorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +56,6 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public List<Author> findByLastName(Pageable pageable, String lastName) {
-        return null;
+        return authorRepository.findByLastName(lastName, pageable).getContent();
     }
 }

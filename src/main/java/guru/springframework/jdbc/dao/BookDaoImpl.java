@@ -21,7 +21,7 @@ public class BookDaoImpl implements BookDao {
 
 	@Override
 	public List<Book> findAllSortedByTitle(Pageable pageable) {
-		return null;
+		return bookRepository.findAll(pageable).getContent();
 	}
 
 	@Override
@@ -37,8 +37,7 @@ public class BookDaoImpl implements BookDao {
 		if (offset > 0) {
 			pageNum = offset / pageSize;
 		}
-		pageRequest.withPage(pageNum);
-		return findAll(pageRequest);
+		return findAll(pageRequest.withPage(pageNum));
 	}
 
 	@Override

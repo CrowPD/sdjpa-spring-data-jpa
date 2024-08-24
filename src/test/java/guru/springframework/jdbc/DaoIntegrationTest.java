@@ -237,7 +237,7 @@ public class DaoIntegrationTest {
 
 	@Test
 	void findAllSmithsSortedByFirstName() {
-		List<Author> authors = authorDao.findByLastName(PageRequest.of(0, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(0, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("firstName"))), "Smith");
 		assertThat(authors).isNotNull();
 		assertThat(authors.size()).isEqualTo(5);
 		assertThat(authors.get(0).getFirstName().compareTo(authors.get(1).getFirstName())).isGreaterThanOrEqualTo(0);
@@ -245,14 +245,14 @@ public class DaoIntegrationTest {
 
 	@Test
 	void findAllSmiths2ndPage() {
-		List<Author> authors = authorDao.findByLastName(PageRequest.of(2, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(2, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("firstName"))), "Smith");
 		assertThat(authors).isNotNull();
 		assertThat(authors.size()).isEqualTo(5);
 	}
 
 	@Test
 	void findAllSmithsOverflow() {
-		List<Author> authors = authorDao.findByLastName(PageRequest.of(20, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(20, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("firstName"))), "Smith");
 		assertThat(authors).isNotNull();
 		assertThat(authors.size()).isEqualTo(0);
 	}
