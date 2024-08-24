@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ComponentScan(basePackages = {"guru.springframework.jdbc.dao"})
 class BookDaoJDBCTemplateTest {
+	private static final int PAGE_SIZE = 3;
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -33,18 +35,47 @@ class BookDaoJDBCTemplateTest {
 	}
 
 	@Test
-	void findAllLimited1Page() {
-		List<Book> books = bookDao.findAll(0, 3);
+	void findAllPagedLimited1Page() {
+		List<Book> books = bookDao.findAll(PageRequest.of(0, PAGE_SIZE));
 
 		assertThat(books).isNotNull();
-		assertThat(books.size()).isEqualTo(3);
+		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+	}
+
+	@Test
+	void findAllPagedLimited2Page() {
+		List<Book> books = bookDao.findAll(PageRequest.of(1, PAGE_SIZE));
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+	}
+
+	@Test
+	void findAllPagedLimitedOverhead() {
+		List<Book> books = bookDao.findAll(PageRequest.of(40, PAGE_SIZE));
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(0);
+	}
+
+	@Test
+	void findAllLimited1Page() {
+		List<Book> books = bookDao.findAll(0, PAGE_SIZE);
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(PAGE_SIZE);
 	}
 
 	@Test
 	void findAllLimited2Page() {
-		List<Book> books = bookDao.findAll(3, 3);
+		List<Book> books = bookDao.findAll(3, PAGE_SIZE);
 		assertThat(books).isNotNull();
-		assertThat(books.size()).isEqualTo(3);
+		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+	}
+
+	@Test
+	void findAllLimitedOverhead() {
+		List<Book> books = bookDao.findAll(40, PAGE_SIZE);
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(0);
 	}
 
 	@Test
@@ -110,8 +141,6 @@ class BookDaoJDBCTemplateTest {
 
 		bookDao.deleteBookById(saved.getId());
 
-		assertThrows(EmptyResultDataAccessException.class, () -> {
-			bookDao.getById(saved.getId());
-		});
+		assertThrows(EmptyResultDataAccessException.class, () -> bookDao.getById(saved.getId()));
 	}
 }
