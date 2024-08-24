@@ -33,6 +33,21 @@ class BookDaoJDBCTemplateTest {
 	}
 
 	@Test
+	void findAllLimited1Page() {
+		List<Book> books = bookDao.findAll(0, 3);
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
+	void findAllLimited2Page() {
+		List<Book> books = bookDao.findAll(3, 3);
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
 	void findAll() {
 		List<Book> books = bookDao.findAll();
 
