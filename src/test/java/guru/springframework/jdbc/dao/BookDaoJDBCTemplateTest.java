@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -32,6 +33,15 @@ class BookDaoJDBCTemplateTest {
 	@BeforeEach
 	void setUp() {
 		bookDao = new BookDaoJDBCTemplate(jdbcTemplate);
+	}
+
+	@Test
+	void findAllSortedByTitle() {
+		List<Book> books = bookDao.findAllSortedByTitle(PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Order.desc("title"))));
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+		assertThat(books.get(0).getTitle().compareTo(books.get(1).getTitle())).isGreaterThanOrEqualTo(0);
 	}
 
 	@Test
