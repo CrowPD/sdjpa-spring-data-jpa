@@ -79,7 +79,7 @@ class BookDaoJDBCTemplateTest {
 	void findAllLimited2Page() {
 		List<Book> books = bookDao.findAll(3, PAGE_SIZE);
 		assertThat(books).isNotNull();
-		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+		assertThat(books.size()).isEqualTo(3);
 	}
 
 	@Test

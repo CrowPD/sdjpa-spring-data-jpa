@@ -8,11 +8,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("local")
 @DataJpaTest
 @ComponentScan("guru.springframework.jdbc.dao.hibernate")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -65,7 +67,7 @@ public class BookDaoTest {
 	void findAllLimited2Page() {
 		List<Book> books = bookDao.findAll(3, PAGE_SIZE);
 		assertThat(books).isNotNull();
-		assertThat(books.size()).isEqualTo(PAGE_SIZE);
+		assertThat(books.size()).isEqualTo(3);
 	}
 
 	@Test

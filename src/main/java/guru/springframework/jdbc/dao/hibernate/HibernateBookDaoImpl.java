@@ -23,17 +23,37 @@ public class HibernateBookDaoImpl implements BookDao {
 
 	@Override
 	public List<Book> findAll(Pageable pageable) {
-		return null;
+		try (EntityManager em = emf.createEntityManager()) {
+			TypedQuery<Book> q = em.createQuery(
+							"SELECT b FROM Book b ",
+							Book.class
+					).setFirstResult(Math.toIntExact(pageable.getOffset()))
+					.setMaxResults(pageable.getPageSize());
+			return q.getResultList();
+		}
 	}
 
 	@Override
 	public List<Book> findAll(int offset, int pageSize) {
-		return null;
+		try (EntityManager em = emf.createEntityManager()) {
+			TypedQuery<Book> q = em.createQuery(
+							"SELECT b FROM Book b ",
+							Book.class
+					).setFirstResult(offset)
+					.setMaxResults(pageSize);
+			return q.getResultList();
+		}
 	}
 
 	@Override
 	public List<Book> findAll() {
-		return null;
+		try (EntityManager em = emf.createEntityManager()) {
+			TypedQuery<Book> q = em.createQuery(
+					"SELECT b FROM Book b",
+					Book.class
+			);
+			return q.getResultList();
+		}
 	}
 
 	@Override
@@ -45,7 +65,7 @@ public class HibernateBookDaoImpl implements BookDao {
 
 	@Override
 	public Book findBookByTitle(String title) {
-		try(EntityManager em = getEntityManager()) {
+		try (EntityManager em = getEntityManager()) {
 			TypedQuery<Book> q = em.createQuery(
 					"SELECT b FROM Book b WHERE b.title = :title",
 					Book.class
@@ -92,7 +112,7 @@ public class HibernateBookDaoImpl implements BookDao {
 
 	@Override
 	public Book findBookByIsbn(String isbn) {
-		try(EntityManager em = getEntityManager()) {
+		try (EntityManager em = getEntityManager()) {
 			TypedQuery<Book> q = em.createQuery("SELECT b FROM Book b WHERE b.isbn = :isbn", Book.class);
 			q.setParameter("isbn", isbn);
 			return q.getSingleResult();
