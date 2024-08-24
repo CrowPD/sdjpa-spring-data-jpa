@@ -11,6 +11,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -20,73 +22,81 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ComponentScan(basePackages = {"guru.springframework.jdbc.dao"})
 class BookDaoJDBCTemplateTest {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 
-    BookDao bookDao;
+	BookDao bookDao;
 
-    @BeforeEach
-    void setUp() {
-        bookDao = new BookDaoJDBCTemplate(jdbcTemplate);
-    }
+	@BeforeEach
+	void setUp() {
+		bookDao = new BookDaoJDBCTemplate(jdbcTemplate);
+	}
 
-    @Test
-    void getById() {
-        Book book = bookDao.getById(3L);
+	@Test
+	void findAll() {
+		List<Book> books = bookDao.findAll();
 
-        assertThat(book.getId()).isNotNull();
-    }
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isGreaterThan(0);
+	}
 
-    @Test
-    void findBookByTitle() {
-        Book book = bookDao.findBookByTitle("Clean Code");
+	@Test
+	void getById() {
+		Book book = bookDao.getById(3L);
 
-        assertThat(book).isNotNull();
-    }
+		assertThat(book.getId()).isNotNull();
+	}
 
-    @Test
-    void saveNewBook() {
-        Book book = new Book();
-        book.setIsbn("1234");
-        book.setPublisher("Self");
-        book.setTitle("my book");
-        book.setAuthorId(1L);
+	@Test
+	void findBookByTitle() {
+		Book book = bookDao.findBookByTitle("Clean Code");
 
-        Book saved = bookDao.saveNewBook(book);
+		assertThat(book).isNotNull();
+	}
 
-        assertThat(saved).isNotNull();
-    }
+	@Test
+	void saveNewBook() {
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		book.setAuthorId(1L);
 
-    @Test
-    void updateBook() {
-        Book book = new Book();
-        book.setIsbn("1234");
-        book.setPublisher("Self");
-        book.setTitle("my book");
-        book.setAuthorId(1L);
-        Book saved = bookDao.saveNewBook(book);
+		Book saved = bookDao.saveNewBook(book);
 
-        saved.setTitle("New Book");
-        bookDao.updateBook(saved);
+		assertThat(saved).isNotNull();
+	}
 
-        Book fetched = bookDao.getById(saved.getId());
+	@Test
+	void updateBook() {
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		book.setAuthorId(1L);
+		Book saved = bookDao.saveNewBook(book);
 
-        assertThat(fetched.getTitle()).isEqualTo("New Book");
-    }
+		saved.setTitle("New Book");
+		bookDao.updateBook(saved);
 
-    @Test
-    void deleteBookById() {
+		Book fetched = bookDao.getById(saved.getId());
 
-        Book book = new Book();
-        book.setIsbn("1234");
-        book.setPublisher("Self");
-        book.setTitle("my book");
-        Book saved = bookDao.saveNewBook(book);
+		assertThat(fetched.getTitle()).isEqualTo("New Book");
+	}
 
-        bookDao.deleteBookById(saved.getId());
+	@Test
+	void deleteBookById() {
 
-        assertThrows(EmptyResultDataAccessException.class, () -> {
-            bookDao.getById(saved.getId());
-        });
-    }
+		Book book = new Book();
+		book.setIsbn("1234");
+		book.setPublisher("Self");
+		book.setTitle("my book");
+		Book saved = bookDao.saveNewBook(book);
+
+		bookDao.deleteBookById(saved.getId());
+
+		assertThrows(EmptyResultDataAccessException.class, () -> {
+			bookDao.getById(saved.getId());
+		});
+	}
 }

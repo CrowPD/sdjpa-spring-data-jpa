@@ -3,7 +3,11 @@ package guru.springframework.jdbc.dao;
 import guru.springframework.jdbc.domain.Book;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.List;
+
 public interface BookDao {
+
+	List<Book> findAll();
 
 	Book getById(Long id);
 
