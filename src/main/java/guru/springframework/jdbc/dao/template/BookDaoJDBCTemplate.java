@@ -1,5 +1,6 @@
-package guru.springframework.jdbc.dao;
+package guru.springframework.jdbc.dao.template;
 
+import guru.springframework.jdbc.dao.BookDao;
 import guru.springframework.jdbc.domain.Book;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;

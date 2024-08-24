@@ -1,4 +1,4 @@
-package guru.springframework.jdbc.dao;
+package guru.springframework.jdbc.dao.template;
 
 
 import guru.springframework.jdbc.domain.Book;

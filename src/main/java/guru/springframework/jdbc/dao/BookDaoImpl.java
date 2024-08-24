@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Component("repoBookDao")
 public class BookDaoImpl implements BookDao {
 	private final BookRepository bookRepository;
 

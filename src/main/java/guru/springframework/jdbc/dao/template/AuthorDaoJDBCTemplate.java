@@ -1,5 +1,6 @@
-package guru.springframework.jdbc.dao;
+package guru.springframework.jdbc.dao.template;
 
+import guru.springframework.jdbc.dao.AuthorDao;
 import guru.springframework.jdbc.domain.Author;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Pageable;
