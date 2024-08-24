@@ -13,7 +13,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Import({AuthorDaoImpl.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class DaoIntegrationTest {
+	private final int BOOK_PAGE_SIZE = 3;
+	private final int AUTHOR_PAGE_SIZE = 5;
 	@Autowired
 	@Qualifier("repoAuthorDao")
 	AuthorDao authorDao;
@@ -109,6 +115,69 @@ public class DaoIntegrationTest {
 	}
 
 	@Test
+	void findAllSortedByTitle() {
+		List<Book> books = bookDao.findAllSortedByTitle(PageRequest.of(0, BOOK_PAGE_SIZE, Sort.by(Sort.Order.desc("title"))));
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(BOOK_PAGE_SIZE);
+		assertThat(books.get(0).getTitle().compareTo(books.get(1).getTitle())).isGreaterThanOrEqualTo(0);
+	}
+
+	@Test
+	void findAllPagedLimited1Page() {
+		List<Book> books = bookDao.findAll(PageRequest.of(0, BOOK_PAGE_SIZE));
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
+	void findAllPagedLimited2Page() {
+		List<Book> books = bookDao.findAll(PageRequest.of(1, BOOK_PAGE_SIZE));
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
+	void findAllPagedLimitedOverhead() {
+		List<Book> books = bookDao.findAll(PageRequest.of(40, BOOK_PAGE_SIZE));
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(0);
+	}
+
+	@Test
+	void findAllLimited1Page() {
+		List<Book> books = bookDao.findAll(0, BOOK_PAGE_SIZE);
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
+	void findAllLimited2Page() {
+		List<Book> books = bookDao.findAll(3, BOOK_PAGE_SIZE);
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(3);
+	}
+
+	@Test
+	void findAllLimitedOverhead() {
+		List<Book> books = bookDao.findAll(40, BOOK_PAGE_SIZE);
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isEqualTo(0);
+	}
+
+	@Test
+	void findAll() {
+		List<Book> books = bookDao.findAll();
+
+		assertThat(books).isNotNull();
+		assertThat(books.size()).isGreaterThan(0);
+	}
+
+	/*		AUTHOR		*/
+
+	@Test
 	void testDeleteAuthor() {
 		Author author = new Author();
 		author.setFirstName("john");
@@ -160,10 +229,32 @@ public class DaoIntegrationTest {
 
 	@Test
 	void testGetAuthor() {
-
 		Author author = authorDao.getById(1L);
 
 		assertThat(author).isNotNull();
-
 	}
+
+
+	@Test
+	void findAllSmithsSortedByFirstName() {
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(0, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		assertThat(authors).isNotNull();
+		assertThat(authors.size()).isEqualTo(5);
+		assertThat(authors.get(0).getFirstName().compareTo(authors.get(1).getFirstName())).isGreaterThanOrEqualTo(0);
+	}
+
+	@Test
+	void findAllSmiths2ndPage() {
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(2, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		assertThat(authors).isNotNull();
+		assertThat(authors.size()).isEqualTo(5);
+	}
+
+	@Test
+	void findAllSmithsOverflow() {
+		List<Author> authors = authorDao.findByLastName(PageRequest.of(20, AUTHOR_PAGE_SIZE, Sort.by(Sort.Order.desc("first_name"))), "Smith");
+		assertThat(authors).isNotNull();
+		assertThat(authors.size()).isEqualTo(0);
+	}
+
 }
