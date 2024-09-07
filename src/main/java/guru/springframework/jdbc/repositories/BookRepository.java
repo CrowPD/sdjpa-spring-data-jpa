@@ -17,4 +17,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
 	@Query("SELECT b FROM Book b WHERE b.isbn = :isbnParam")
 	Book findMeAnIsbn(@Param("isbnParam") String isbn);
+
+	Book jpaNamed(final String title);
 }
